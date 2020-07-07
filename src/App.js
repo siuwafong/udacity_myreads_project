@@ -69,7 +69,7 @@ search() {
           id: book.id, 
           shelf: this.state.allList.map(listedBook => listedBook.id).includes(book.id) ? this.state.allList.filter(listedBook => listedBook.id === book.id)[0].shelf : 'none', 
           title: book.title, 
-          author: book.authors ? book.authors : "N/A", 
+          authors: book.authors ? book.authors : "N/A", 
           img: book.imageLinks.thumbnail}
     ], errorMessage: false}))
       )
@@ -105,28 +105,31 @@ changeList(bookId, shelf) {
     ))
   }
 
-  render() {
-    return (
-      <div className="app">
-        <Route exact path='/search' render={() => (
-          <Search 
-              clearSearch = {this.clearSearch}
-              searchResults = {this.state.searchResults}
-              handleChange = {this.handleChange}
-              changeList = {this.changeList}
-              searchEntry = {this.state.searhEntry}
-              errorMessage = {this.state.errorMessage}
-            />
-          )}/>
-        <Route exact path='/'render={() => (
-          <Home 
+render() {
+  return (
+    <div className="app">
+      
+      <Route exact path='/search' render={() => (
+        <Search 
+            clearSearch = {this.clearSearch}
+            searchResults = {this.state.searchResults}
+            handleChange = {this.handleChange}
             changeList = {this.changeList}
-            currentlyReadingList = {this.state.currentlyReadingList}
-            wantToReadList = {this.state.wantToReadList}
-            readList = {this.state.readList}
-            />
-          )}/>        
-      </div>
+            searchEntry = {this.state.searhEntry}
+            errorMessage = {this.state.errorMessage}
+          />
+        )}/>
+      
+      <Route exact path='/'render={() => (
+        <Home 
+          changeList = {this.changeList}
+          currentlyReadingList = {this.state.currentlyReadingList}
+          wantToReadList = {this.state.wantToReadList}
+          readList = {this.state.readList}
+          />
+
+        )}/>        
+    </div>
     )  
   }
 }

@@ -24,7 +24,7 @@ export default class Home extends Component {
         
           <div className="open-search">
             <Link exact to="/search" >
-            <button>Add a book</button> 
+                <button>Add a book</button> 
             </Link>
           </div>
 
