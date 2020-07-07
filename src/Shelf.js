@@ -13,7 +13,7 @@ export default class Shelf extends Component {
             <div className="bookshelf-books">
               <ol className="books-grid">
                 {this.props.list.map(book => (
-                    <Book shelf={book.shelf} title={book.title} author={book.authors ? book.authors[0] : "N/A"} imgSrc={this.props.title === "Search Results" ? book.img : book.imageLinks.thumbnail} key={book.id} id={book.id} changeList={this.props.changeList}/>
+                    <Book shelf={book.shelf} title={book.title} author={book.author ? book.author[0] : "N/A"} imgSrc={this.props.title === "Search Results" ? book.img : book.imageLinks.thumbnail} key={book.id} id={book.id} changeList={this.props.changeList}/>
                 ))}
               </ol>
             </div>
