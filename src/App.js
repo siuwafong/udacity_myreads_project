@@ -78,8 +78,8 @@ search() {
     ], errorMessage: false}))
       )
     }
-  ).catch(err => {
-    this.setState({errorMessage: true})
+    ).catch(err => {
+      this.setState({errorMessage: true})
   })
 }
 
@@ -111,7 +111,15 @@ changeList(bookId, shelf) {
         {this.state.showSearchPage ? (
           <div className="search-books">
             <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false,  searchEntry: '', searchResults: []})}>Close</a>
+              <Link 
+                className="close-search"
+                exact
+                to='/'
+                onClick={() => this.setState({ showSearchPage: false,  searchEntry: '', searchResults: []})}>
+                  Close
+                </Link>
+                
+              {/* <a className="close-search" onClick={() => this.setState({ showSearchPage: false,  searchEntry: '', searchResults: []})}>Close</a> */}
               <div className="search-books-input-wrapper">
                 {/*
                   NOTES: The search from BooksAPI is limited to a particular set of search terms.
