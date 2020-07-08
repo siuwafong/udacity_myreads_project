@@ -10,7 +10,7 @@ class BooksApp extends React.Component {
     super(props)
 
     this.state = {
-    searchEntry: '',
+    searchEntry: "",
     searchResults: [],
     errorMessage: false,
     currentlyReadingList: [],
@@ -60,34 +60,35 @@ componentDidMount() {
   this.setAllList();
 }
 
-search() {
-  BooksAPI.search(this.state.searchEntry)
+search(searchEntry) {
+  BooksAPI.search(searchEntry)
     .then(res => {
-    this.setState({searchResults: []})
+    this.setState(() => ({searchResults: []}))
     res.map(book => (
       this.setState({searchResults: [...this.state.searchResults, {
           id: book.id, 
           shelf: this.state.allList.map(listedBook => listedBook.id).includes(book.id) ? this.state.allList.filter(listedBook => listedBook.id === book.id)[0].shelf : 'none', 
           title: book.title, 
           authors: book.authors ? book.authors : "N/A", 
-          img: book.imageLinks.thumbnail}
+          img: book.imageLinks ? book.imageLinks.thumbnail: "N/A"}
     ], errorMessage: false}))
       )
     }
-    ).catch(err => {
-      this.setState({errorMessage: true})
+    )
+    .catch(err => {
+      this.setState(() => ({errorMessage: true}))
   })
 }
 
 clearSearch() {
-  this.setState({ searchEntry: '', searchResults: []})
+  this.setState(() => ({ searchEntry: '', searchResults: []}))
 }
 
 handleChange(evt) {
     let timeoutId;
-  	this.setState({
-      searchEntry: evt.target.value.toLowerCase()
-    })  
+  	this.setState(() => ({
+      searchEntry: evt
+    }))  
       if (timeoutId) {
         clearTimeout(timeoutId)
       }
@@ -115,7 +116,7 @@ render() {
             searchResults = {this.state.searchResults}
             handleChange = {this.handleChange}
             changeList = {this.changeList}
-            searchEntry = {this.state.searhEntry}
+            searchEntry = {this.state.searchEntry}
             errorMessage = {this.state.errorMessage}
           />
         )}/>

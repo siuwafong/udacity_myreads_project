@@ -16,12 +16,13 @@ export default class Search extends Component {
                 </Link>
                 
               <div className="search-books-input-wrapper">               
-                <input type="text" name="searchBook" placeholder="Search by title or author" onChange={this.props.handleChange} />
+                <input type="text" name="searchBook" placeholder="Search by title or author"  onChange={(event) => this.props.handleChange(event.target.value)} />
               </div>
             </div>
             
             <div className="search-books-results">
               {this.props.errorMessage === false && this.props.searchEntry !== "" && <Shelf list={this.props.searchResults} changeList={this.props.changeList} title="Search Results"  />}
+              {this.props.errorMessage && this.props.searchEntry !== "" ? <h1>No results for "{this.props.searchEntry}"</h1> : ""}
             </div>
 
           </div>
