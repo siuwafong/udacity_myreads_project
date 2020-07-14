@@ -23,51 +23,39 @@ class BooksApp extends React.Component {
     this.search = this.search.bind(this);
     this.clearSearch = this.clearSearch.bind(this);
     this.changeList = this.changeList.bind(this);
-    this.setCurrentlyReadingList = this.setCurrentlyReadingList.bind(this);
-    this.setWantToReadList = this.setWantToReadList.bind(this);
-    this.setReadList = this.setReadList.bind(this);
-    this.setAllList = this.setAllList.bind(this);
+    this.setLists = this.setLists.bind(this);
   }
 
-setCurrentlyReadingList() {
+// set the Currently Reading, Want to Read, and Read lists.  Then put all those lists into the All list 
+setLists() {
   BooksAPI.getAll().then(res => 
     this.setState({ currentlyReadingList: res.filter(book => book.shelf === 'currentlyReading')})
     )
+    .then(() => BooksAPI.getAll().then(res => 
+      this.setState({ wantToReadList: res.filter(book => book.shelf === 'wantToRead')})
+    ))
+    .then(() => BooksAPI.getAll().then(res => 
+      this.setState({ readList: res.filter(book => book.shelf === 'read')})
+    )
+    .then(() => this.setState({allList: [...this.state.wantToReadList, ...this.state.currentlyReadingList, ...this.state.readList]})))
+    // .then(() => this.state.searchResults !== [] && this.search(this.state.searchEntry))
+    .catch((err) => {throw err})
 }
 
-setWantToReadList() {
-  BooksAPI.getAll().then(res => 
-    this.setState({ wantToReadList: res.filter(book => book.shelf === 'wantToRead')})
-    )
-}
-
-setReadList() {
-  BooksAPI.getAll().then(res => 
-    this.setState({ readList: res.filter(book => book.shelf === 'read')})
-    )
-}
-
-setAllList() {
-  BooksAPI.getAll().then(res => 
-    this.setState({ allList: res.filter(book => book.shelf === 'read' || book.shelf === 'wantToRead' || book.shelf === 'currentlyReading')})
-    )
-}
 
 componentDidMount() {
-  this.setCurrentlyReadingList();
-  this.setWantToReadList();
-  this.setReadList();
-  this.setAllList();
+  this.setLists()
 }
 
+// search function
 search(searchEntry) {
   BooksAPI.search(searchEntry)
     .then(res => {
-    this.setState(() => ({searchResults: []}))
+    this.setState(() => ({searchResults: [], errorMessage: false}))
     res.map(book => (
       this.setState({searchResults: [...this.state.searchResults, {
-          id: book.id, 
-          shelf: this.state.allList.map(listedBook => listedBook.id).includes(book.id) ? this.state.allList.filter(listedBook => listedBook.id === book.id)[0].shelf : 'none', 
+          id: book.id,
+          shelf: this.state.allList.map(listedBook => listedBook.id).includes(book.id) ? this.state.allList.find(listedBook => listedBook.id === book.id).shelf : 'none',  
           title: book.title, 
           authors: book.authors ? book.authors : "N/A", 
           img: book.imageLinks ? book.imageLinks.thumbnail: "N/A"}
@@ -81,10 +69,12 @@ search(searchEntry) {
 }
 
 clearSearch() {
-  this.setState(() => ({ searchEntry: '', searchResults: []}))
+  // clear the search information when going back to the library
+  this.setState(() => ({ searchEntry: '', searchResults: [], errorMessage: false}))
 }
 
 handleChange(evt) {
+    // set a debouncer for the search function
     let timeoutId;
   	this.setState(() => ({
       searchEntry: evt
@@ -96,21 +86,27 @@ handleChange(evt) {
     }
 
 changeList(bookId, shelf) {
+
+  // update the dropdown menu option in the search results
+  const idx = this.state.searchResults.findIndex(book => book.id === bookId)
+  const searchResultsLength = this.state.searchResults.length
+  const newSearchResults = [...this.state.searchResults.slice(0, idx), {...this.state.searchResults[idx], shelf: shelf }, ...this.state.searchResults.slice(idx + 1, searchResultsLength + 1)]
+  this.setState(() => ({ searchResults: newSearchResults}))
+
+  // update the database and reset the lists
   BooksAPI.get(bookId)
-    .then((book) => BooksAPI.update(book, shelf)
+    .then((book) => BooksAPI.update(book, shelf))
     .then(() =>   {
-      this.setCurrentlyReadingList();
-      this.setWantToReadList();
-      this.setReadList();
-      } 
-    ))
-  }
+      this.setLists();
+      })
+}
 
 render() {
+  
   return (
     <div className="app">
-      
-      <Route exact path='/search' render={() => (
+    
+      <Route path='/search' render={() => (
         <Search 
             clearSearch = {this.clearSearch}
             searchResults = {this.state.searchResults}

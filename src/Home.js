@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Shelf from './Shelf'
 import { Link } from 'react-router-dom';
 
-export default class Home extends Component {
-    render() {
+export default function Home(props) {
+
         return (
           <div className="list-books">
           
@@ -11,24 +11,26 @@ export default class Home extends Component {
             <h1>MyReads</h1>
           </div>
           
+          {/* Display the three shelves of books */}
           <div className="list-books-content">
             <div>
               {/*  filtered 'currentlyReading' books */}
-              <Shelf list={this.props.currentlyReadingList} changeList={this.props.changeList} title="Currently Reading"/>
+              <Shelf list={props.currentlyReadingList} changeList={props.changeList} title="Currently Reading"/>
               {/*  filtered 'wantToRead' books */}
-              <Shelf list={this.props.wantToReadList} changeList={this.props.changeList} title="Want to Read"/>
+              <Shelf list={props.wantToReadList} changeList={props.changeList} title="Want to Read"/>
               {/*  filtered 'Read' books */}
-              <Shelf list={this.props.readList} changeList={this.props.changeList} title="Read"/>
+              <Shelf list={props.readList} changeList={props.changeList} title="Read"/>
             </div>
           </div>
         
+          {/* Link to the search page */}
           <div className="open-search">
-            <Link exact to="/search" >
+            <Link to="/search" >
                 <button>Add a book</button> 
             </Link>
           </div>
 
         </div>
         )
-    }
+
 }
